@@ -45,12 +45,12 @@ public class AuthController {
     public ResponseEntity<?> crearTokenDeAuthenticacion(@RequestBody AuthRequestDTO request){
         Usuario usuarioopt=new UsuarioJpaController().findUsuarioByCorreo(request.getEmail());
         if(usuarioopt==null){
-            return new ResponseEntity<>("El usuario no existe",HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(401).body("Correo o contraseña incorrectos");
         }
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
         } catch (BadCredentialsException BCEx) {
-            return new ResponseEntity<>("Credenciales incorrecta",HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(401).body("Correo o contraseña incorrectos");
         }
         final UserDetails userDetails=userDetailServiceImpl.loadUserByUsername(request.getEmail());
         final String token=jwtUtil.generateToken(userDetails);
