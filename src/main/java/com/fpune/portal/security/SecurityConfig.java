@@ -46,7 +46,7 @@ public class SecurityConfig {
                 // Tus reglas actuales
                 .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/usuarios/**").hasRole("Admin")
-                .requestMatchers(HttpMethod.POST,"/usuarios").permitAll()
+                .requestMatchers(HttpMethod.POST,"/usuarios").hasRole("Admin")
                 .requestMatchers(HttpMethod.PATCH,"/usuarios").hasRole("Admin")
                 .requestMatchers(HttpMethod.DELETE,"/usuarios/**").hasRole("Admin")
                 

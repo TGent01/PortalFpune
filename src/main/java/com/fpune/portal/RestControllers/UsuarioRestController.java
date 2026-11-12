@@ -68,7 +68,7 @@ public class UsuarioRestController {
     }
     
     @PutMapping()
-    public ResponseEntity<?> pathUsuario(@RequestBody Usuario u){
+    public ResponseEntity<?> putUsuario(@RequestBody Usuario u){
         int r=usuarioService.modificarUsuario(u);
         if(r==status.USUARIO_EDITADO.getCodigo()){
             return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado");
