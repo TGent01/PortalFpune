@@ -4,6 +4,7 @@
  */
 package com.fpune.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,6 +63,7 @@ public class Usuario implements Serializable {
     private String correo;
     @Basic(optional = false)
     @Column(name = "password")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // se recibe, pero nunca se devuelve en el JSON
     private String password;
     @Column(name = "vinculo_institucional")
     private String vinculoInstitucional;

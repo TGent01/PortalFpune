@@ -3,9 +3,12 @@ package com.fpune.portal.services;
 
 import com.fpune.portal.controllers.UsuarioJpaController;
 import com.fpune.portal.controllers.UsuarioJpaController;
+import com.fpune.portal.entity.Rol;
 import com.fpune.portal.entity.Usuario;
 import com.fpune.portal.status.UsuarioStatusEnum;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password4j.BcryptPassword4jPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,8 +30,18 @@ public class UsuarioServiceMysqlImpl implements UsuarioService{
 
     @Override
     public int insertarUsuario(Usuario u) {
-        if(u.getCi()==null && u.getPassword()==null && u.getCorreo()==null){
+        // Rechazar si falta CUALQUIERA de los campos obligatorios
+        if(estaVacio(u.getCi()) || estaVacio(u.getCorreo()) || estaVacio(u.getPassword())
+                || estaVacio(u.getNombre()) || estaVacio(u.getApellido())){
             return status.USUARIO_NO_PROCESABLE.getCodigo();
+        }
+        // Valores por defecto
+        if(u.getIsEnable()==null){
+            u.setIsEnable(true);
+        }
+        u.setFechaCreacion(new Date()); // la fecha de alta siempre la pone el servidor
+        if(u.getRolList()==null || u.getRolList().isEmpty()){
+            u.setRolList(new ArrayList<>(List.of(new Rol(1)))); // rol Solicitante
         }
         String passwordHash=new BCryptPasswordEncoder().encode(u.getPassword());
         u.setPassword(passwordHash);
@@ -86,6 +99,11 @@ public class UsuarioServiceMysqlImpl implements UsuarioService{
     @Override
     public Usuario obtenerUsuarioPorCorreo(String correo) {
         return usuarioJpaController.findUsuarioByCorreo(correo);
+    }
+
+    // true si el texto es null o solo tiene espacios
+    private static boolean estaVacio(String s) {
+        return s == null || s.isBlank();
     }
     
     
