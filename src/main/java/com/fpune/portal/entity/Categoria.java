@@ -33,9 +33,6 @@ import java.util.List;
     @NamedQuery(name = "Categoria.findByIsActiva", query = "SELECT c FROM Categoria c WHERE c.isActiva = :isActiva")})
 public class Categoria implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria", fetch = FetchType.EAGER)
-    private List<Solicitudes> solicitudesList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -121,12 +118,6 @@ public class Categoria implements Serializable {
         return "com.fpune.portal.entity.Categoria[ id=" + id + " ]";
     }
 
-    public List<Solicitudes> getSolicitudesList() {
-        return solicitudesList;
-    }
 
-    public void setSolicitudesList(List<Solicitudes> solicitudesList) {
-        this.solicitudesList = solicitudesList;
-    }
     
 }

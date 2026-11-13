@@ -31,8 +31,7 @@ import java.util.List;
     @NamedQuery(name = "Prioridad.findByNivel", query = "SELECT p FROM Prioridad p WHERE p.nivel = :nivel")})
 public class Prioridad implements Serializable {
 
-    @OneToMany(mappedBy = "prioridad", fetch = FetchType.EAGER)
-    private List<Solicitudes> solicitudesList;
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -109,12 +108,5 @@ public class Prioridad implements Serializable {
         return "com.fpune.portal.entity.Prioridad[ id=" + id + " ]";
     }
 
-    public List<Solicitudes> getSolicitudesList() {
-        return solicitudesList;
-    }
-
-    public void setSolicitudesList(List<Solicitudes> solicitudesList) {
-        this.solicitudesList = solicitudesList;
-    }
     
 }

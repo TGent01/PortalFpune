@@ -10,6 +10,9 @@
     <class>com.fpune.portal.entity.TipoSolicitud</class>
     <class>com.fpune.portal.entity.Evidencia</class>
     <class>com.fpune.portal.entity.Solicitudes</class>
+    <class>com.fpune.portal.entity.HistorialEstado</class>
+    <class>com.fpune.portal.entity.Solicitud</class>
+    <class>com.fpune.portal.entity.HistorialEstados</class>
     <validation-mode>NONE</validation-mode>
     <properties>
       <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/qrs?zeroDateTimeBehavior=CONVERT_TO_NULL"/>

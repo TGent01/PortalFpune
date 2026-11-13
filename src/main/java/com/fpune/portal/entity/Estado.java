@@ -33,21 +33,21 @@ import java.util.List;
     @NamedQuery(name = "Estado.findByOrden", query = "SELECT e FROM Estado e WHERE e.orden = :orden")})
 public class Estado implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estado", fetch = FetchType.EAGER)
-    private List<Solicitudes> solicitudesList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Basic(optional = false)
     @Column(name = "nombre")
     private String nombre;
+    
     @Basic(optional = false)
     @Column(name = "es_final")
     private boolean esFinal;
+    
     @Basic(optional = false)
     @Column(name = "orden")
     private int orden;
@@ -123,12 +123,7 @@ public class Estado implements Serializable {
         return "com.fpune.portal.entity.Estado[ id=" + id + " ]";
     }
 
-    public List<Solicitudes> getSolicitudesList() {
-        return solicitudesList;
-    }
-
-    public void setSolicitudesList(List<Solicitudes> solicitudesList) {
-        this.solicitudesList = solicitudesList;
-    }
+   
+ 
     
 }

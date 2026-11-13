@@ -4,6 +4,7 @@
  */
 package com.fpune.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,22 +40,26 @@ public class Evidencia implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    
     @Basic(optional = false)
     @Column(name = "nombre_archivo")
     private String nombreArchivo;
+    
     @Basic(optional = false)
     @Column(name = "ruta_archivo")
     private String rutaArchivo;
+    
     @Basic(optional = false)
     @Column(name = "tipo_mime")
     private String tipoMime;
+    
     @Basic(optional = false)
     @Column(name = "tamano_bytes")
     private int tamanoBytes;
-    @JoinColumn(name = "id_solicitud", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Solicitudes solicitudes;
+   
 
+    
+    
     public Evidencia() {
     }
 
@@ -110,13 +115,7 @@ public class Evidencia implements Serializable {
         this.tamanoBytes = tamanoBytes;
     }
 
-    public Solicitudes getSolicitudes() {
-        return solicitudes;
-    }
-
-    public void setSolicitudes(Solicitudes solicitudes) {
-        this.solicitudes = solicitudes;
-    }
+    
 
     @Override
     public int hashCode() {

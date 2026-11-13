@@ -32,14 +32,29 @@ import java.util.List;
 @Entity
 @Table(name = "solicitudes")
 @NamedQueries({
-    @NamedQuery(name = "Solicitudes.findAll", query = "SELECT s FROM Solicitudes s"),
-    @NamedQuery(name = "Solicitudes.findById", query = "SELECT s FROM Solicitudes s WHERE s.id = :id"),
-    @NamedQuery(name = "Solicitudes.findByCodigoTicket", query = "SELECT s FROM Solicitudes s WHERE s.codigoTicket = :codigoTicket"),
-    @NamedQuery(name = "Solicitudes.findByAsunto", query = "SELECT s FROM Solicitudes s WHERE s.asunto = :asunto"),
-    @NamedQuery(name = "Solicitudes.findByUbicacion", query = "SELECT s FROM Solicitudes s WHERE s.ubicacion = :ubicacion"),
-    @NamedQuery(name = "Solicitudes.findByFechaCreacion", query = "SELECT s FROM Solicitudes s WHERE s.fechaCreacion = :fechaCreacion"),
-    @NamedQuery(name = "Solicitudes.findByFechaCierre", query = "SELECT s FROM Solicitudes s WHERE s.fechaCierre = :fechaCierre")})
-public class Solicitudes implements Serializable {
+    @NamedQuery(name = "Solicitud.findAll", query = "SELECT s FROM Solicitud s"),
+    @NamedQuery(name = "Solicitud.findById", query = "SELECT s FROM Solicitud s WHERE s.id = :id"),
+    @NamedQuery(name = "Solicitud.findByCodigoTicket", query = "SELECT s FROM Solicitud s WHERE s.codigoTicket = :codigoTicket"),
+    @NamedQuery(name = "Solicitud.findByAsunto", query = "SELECT s FROM Solicitud s WHERE s.asunto = :asunto"),
+    @NamedQuery(name = "Solicitud.findByUbicacion", query = "SELECT s FROM Solicitud s WHERE s.ubicacion = :ubicacion"),
+    @NamedQuery(name = "Solicitud.findByFechaCreacion", query = "SELECT s FROM Solicitud s WHERE s.fechaCreacion = :fechaCreacion"),
+    @NamedQuery(name = "Solicitud.findByFechaCierre", query = "SELECT s FROM Solicitud s WHERE s.fechaCierre = :fechaCierre")})
+public class Solicitud implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitud", fetch = FetchType.LAZY)
+    private List<HistorialEstados> historialEstadosList;
+    @JoinColumn(name = "id_categoria", referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Categoria categoria;
+    @JoinColumn(name = "id_estado", referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Estado estado;
+    @JoinColumn(name = "id_prioridad", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Prioridad prioridad;
+    @JoinColumn(name = "id_tipo", referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private TipoSolicitud tipoSolicitud;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -66,29 +81,15 @@ public class Solicitudes implements Serializable {
     @Column(name = "fecha_cierre")
     @Temporal(TemporalType.DATE)
     private Date fechaCierre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitudes", fetch = FetchType.EAGER)
-    private List<Evidencia> evidenciaList;
-    @JoinColumn(name = "id_categoria", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Categoria categoria;
-    @JoinColumn(name = "id_estado", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Estado estado;
-    @JoinColumn(name = "id_prioridad", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Prioridad prioridad;
-    @JoinColumn(name = "id_tipo", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private TipoSolicitud tipoSolicitud;
 
-    public Solicitudes() {
+    public Solicitud() {
     }
 
-    public Solicitudes(Long id) {
+    public Solicitud(Long id) {
         this.id = id;
     }
 
-    public Solicitudes(Long id, String codigoTicket, String asunto, String descripcion, Date fechaCreacion) {
+    public Solicitud(Long id, String codigoTicket, String asunto, String descripcion, Date fechaCreacion) {
         this.id = id;
         this.codigoTicket = codigoTicket;
         this.asunto = asunto;
@@ -152,12 +153,37 @@ public class Solicitudes implements Serializable {
         this.fechaCierre = fechaCierre;
     }
 
-    public List<Evidencia> getEvidenciaList() {
-        return evidenciaList;
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    public void setEvidenciaList(List<Evidencia> evidenciaList) {
-        this.evidenciaList = evidenciaList;
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Solicitud)) {
+            return false;
+        }
+        Solicitud other = (Solicitud) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.fpune.portal.entity.Solicitud[ id=" + id + " ]";
+    }
+
+    public List<HistorialEstados> getHistorialEstadosList() {
+        return historialEstadosList;
+    }
+
+    public void setHistorialEstadosList(List<HistorialEstados> historialEstadosList) {
+        this.historialEstadosList = historialEstadosList;
     }
 
     public Categoria getCategoria() {
@@ -190,31 +216,6 @@ public class Solicitudes implements Serializable {
 
     public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
         this.tipoSolicitud = tipoSolicitud;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Solicitudes)) {
-            return false;
-        }
-        Solicitudes other = (Solicitudes) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.fpune.portal.entity.Solicitudes[ id=" + id + " ]";
     }
     
 }

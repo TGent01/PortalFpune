@@ -6,6 +6,7 @@ package com.fpune.portal.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,6 +18,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -42,6 +44,10 @@ import java.util.List;
     @NamedQuery(name = "Usuario.findByIsEnable", query = "SELECT u FROM Usuario u WHERE u.isEnable = :isEnable"),
     @NamedQuery(name = "Usuario.findByFechaCreacion", query = "SELECT u FROM Usuario u WHERE u.fechaCreacion = :fechaCreacion")})
 public class Usuario implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario", fetch = FetchType.LAZY)
+    private List<HistorialEstados> historialEstadosList;
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -200,5 +206,13 @@ public class Usuario implements Serializable {
     public String toString() {
         return "com.fpune.portal.entity.Usuario[ id=" + id + " ]";
     }
-    
+
+    public List<HistorialEstados> getHistorialEstadosList() {
+        return historialEstadosList;
+    }
+
+    public void setHistorialEstadosList(List<HistorialEstados> historialEstadosList) {
+        this.historialEstadosList = historialEstadosList;
+    }
+
 }

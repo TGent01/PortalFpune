@@ -32,8 +32,10 @@ import java.util.List;
     @NamedQuery(name = "TipoSolicitud.findByDescripcion", query = "SELECT t FROM TipoSolicitud t WHERE t.descripcion = :descripcion")})
 public class TipoSolicitud implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoSolicitud", fetch = FetchType.EAGER)
-    private List<Solicitudes> solicitudesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoSolicitud", fetch = FetchType.LAZY)
+    private List<Solicitud> solicitudList;
+
+    
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -108,12 +110,15 @@ public class TipoSolicitud implements Serializable {
         return "com.fpune.portal.entity.TipoSolicitud[ id=" + id + " ]";
     }
 
-    public List<Solicitudes> getSolicitudesList() {
-        return solicitudesList;
+    public List<Solicitud> getSolicitudList() {
+        return solicitudList;
     }
 
-    public void setSolicitudesList(List<Solicitudes> solicitudesList) {
-        this.solicitudesList = solicitudesList;
+    public void setSolicitudList(List<Solicitud> solicitudList) {
+        this.solicitudList = solicitudList;
     }
+
+   
+
     
 }
