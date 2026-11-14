@@ -43,6 +43,7 @@ import java.util.List;
     @NamedQuery(name = "Solicitud.findByFechaCierre", query = "SELECT s FROM Solicitud s WHERE s.fechaCierre = :fechaCierre")})
 public class Solicitud implements Serializable {
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitud", fetch = FetchType.LAZY)
     private List<HistorialEstados> historialEstadosList;
     @JoinColumn(name = "id_categoria", referencedColumnName = "id")
