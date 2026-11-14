@@ -4,6 +4,7 @@
  */
 package com.fpune.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,6 +23,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,16 +46,16 @@ public class Solicitud implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitud", fetch = FetchType.LAZY)
     private List<HistorialEstados> historialEstadosList;
     @JoinColumn(name = "id_categoria", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Categoria categoria;
     @JoinColumn(name = "id_estado", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Estado estado;
     @JoinColumn(name = "id_prioridad", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Prioridad prioridad;
     @JoinColumn(name = "id_tipo", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private TipoSolicitud tipoSolicitud;
 
     private static final long serialVersionUID = 1L;
@@ -81,6 +83,18 @@ public class Solicitud implements Serializable {
     @Column(name = "fecha_cierre")
     @Temporal(TemporalType.DATE)
     private Date fechaCierre;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Evidencia> evidenciaList = new ArrayList<>();
+
+    public List<Evidencia> getEvidenciaList() {
+        return evidenciaList;
+    }
+
+    public void setEvidenciaList(List<Evidencia> evidenciaList) {
+        this.evidenciaList = evidenciaList;
+    }
 
     public Solicitud() {
     }

@@ -57,7 +57,18 @@ public class Evidencia implements Serializable {
     @Column(name = "tamano_bytes")
     private int tamanoBytes;
    
+    @JsonIgnore
+    @JoinColumn(name = "id_solicitud", referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Solicitud solicitud;
 
+    public Solicitud getSolicitud() {
+        return solicitud;
+    }
+
+    public void setSolicitud(Solicitud solicitud) {
+        this.solicitud = solicitud;
+    }
     
     
     public Evidencia() {

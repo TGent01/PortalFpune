@@ -45,9 +45,6 @@ import java.util.List;
     @NamedQuery(name = "Usuario.findByFechaCreacion", query = "SELECT u FROM Usuario u WHERE u.fechaCreacion = :fechaCreacion")})
 public class Usuario implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario", fetch = FetchType.LAZY)
-    private List<HistorialEstados> historialEstadosList;
-
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -207,12 +204,5 @@ public class Usuario implements Serializable {
         return "com.fpune.portal.entity.Usuario[ id=" + id + " ]";
     }
 
-    public List<HistorialEstados> getHistorialEstadosList() {
-        return historialEstadosList;
-    }
-
-    public void setHistorialEstadosList(List<HistorialEstados> historialEstadosList) {
-        this.historialEstadosList = historialEstadosList;
-    }
 
 }
