@@ -34,7 +34,7 @@ import java.util.List;
 @Entity
 @Table(name = "solicitudes")
 @NamedQueries({
-    @NamedQuery(name = "Solicitud.findAll", query = "SELECT s FROM Solicitud s"),
+    @NamedQuery(name = "Solicitud.findAll", query = "SELECT s FROM Solicitud s ORDER BY s.fechaCreacion DESC, s.id DESC"),
     @NamedQuery(name = "Solicitud.findById", query = "SELECT s FROM Solicitud s WHERE s.id = :id"),
     @NamedQuery(name = "Solicitud.findByCodigoTicket", query = "SELECT s FROM Solicitud s WHERE s.codigoTicket = :codigoTicket"),
     @NamedQuery(name = "Solicitud.findByAsunto", query = "SELECT s FROM Solicitud s WHERE s.asunto = :asunto"),

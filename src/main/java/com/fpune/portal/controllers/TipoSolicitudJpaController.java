@@ -21,8 +21,9 @@ import java.util.List;
  */
 public class TipoSolicitudJpaController implements Serializable {
 
-    public TipoSolicitudJpaController(EntityManagerFactory emf) {
-        this.emf = emf;
+    public TipoSolicitudJpaController() {
+      this.emf = JpaUtil.getEntityManagerFactory();
+
     }
     private EntityManagerFactory emf = null;
 

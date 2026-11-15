@@ -22,7 +22,8 @@ import java.util.List;
 public class PrioridadJpaController implements Serializable {
 
     public PrioridadJpaController(EntityManagerFactory emf) {
-        this.emf = emf;
+        this.emf = JpaUtil.getEntityManagerFactory();
+
     }
     private EntityManagerFactory emf = null;
 

@@ -23,7 +23,7 @@ import java.util.List;
 public class UsuarioJpaController implements Serializable {
 
     public UsuarioJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("com.fpune_portal_jar_0.0.1-SNAPSHOTPU");
+        this.emf = JpaUtil.getEntityManagerFactory();
     }
     private EntityManagerFactory emf = null;
 

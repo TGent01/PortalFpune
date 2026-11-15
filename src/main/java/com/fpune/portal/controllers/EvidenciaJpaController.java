@@ -22,8 +22,9 @@ import java.util.List;
  */
 public class EvidenciaJpaController implements Serializable {
 
-    public EvidenciaJpaController(EntityManagerFactory emf) {
-        this.emf = emf;
+    public EvidenciaJpaController() {
+      this.emf = JpaUtil.getEntityManagerFactory();
+
     }
     private EntityManagerFactory emf = null;
 

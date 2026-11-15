@@ -27,7 +27,8 @@ import jakarta.persistence.Persistence;
 public class SolicitudJpaController implements Serializable {
 
     public SolicitudJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("com.fpune_portal_jar_0.0.1-SNAPSHOTPU");
+        this.emf = JpaUtil.getEntityManagerFactory();
+
     }
     private EntityManagerFactory emf = null;
 

@@ -21,8 +21,9 @@ import java.util.List;
  */
 public class EstadoJpaController implements Serializable {
 
-    public EstadoJpaController(EntityManagerFactory emf) {
-        this.emf = emf;
+    public EstadoJpaController() {
+     this.emf = JpaUtil.getEntityManagerFactory();
+
     }
     private EntityManagerFactory emf = null;
 

@@ -21,8 +21,9 @@ import java.util.List;
  */
 public class CategoriaJpaController implements Serializable {
 
-    public CategoriaJpaController(EntityManagerFactory emf) {
-        this.emf = emf;
+    public CategoriaJpaController() {
+     this.emf = JpaUtil.getEntityManagerFactory();
+
     }
     private EntityManagerFactory emf = null;
 
