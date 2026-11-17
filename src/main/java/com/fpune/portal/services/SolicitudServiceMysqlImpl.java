@@ -1,7 +1,7 @@
 
 package com.fpune.portal.services;
 
-import com.fpune.portal.Util.TicketGenerator;
+import com.fpune.portal.util.TicketGenerator;
 import com.fpune.portal.controllers.SolicitudJpaController;
 import com.fpune.portal.entity.Estado;
 import com.fpune.portal.entity.Prioridad;
@@ -35,7 +35,7 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
 
     @Override
     public int crearSolicitud(Solicitud solicitud) {
-        if(solicitud.getAsunto()==null && solicitud.getCategoria()==null && solicitud.getDescripcion()==null && solicitud.getTipoSolicitud()==null){
+        if(solicitud.getAsunto()==null || solicitud.getCategoria()==null || solicitud.getDescripcion()==null || solicitud.getTipoSolicitud()==null){
             return status.SOLICITUD_NO_PROCESABLE.getCodigo();
         }
         
@@ -43,9 +43,9 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
         //Esto hai que cambiar luego cuando este el servicio Estado
         solicitud.setEstado(new Estado(1,"Recibido",false,1));
         Date fecha_de_hoy = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date fecha_de_cierre= Date.from(localDate.plusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        //Date fecha_de_cierre= Date.from(localDate.plusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant());
         solicitud.setFechaCreacion(fecha_de_hoy);
-        solicitud.setFechaCierre(fecha_de_cierre);
+        solicitud.setFechaCierre(null);
         solicitud.setCodigoTicket(TicketGenerator.generarUnico(codigo -> solicitudJpaController.existeTicket(codigo)));
         solicitud.setPrioridad(new Prioridad(1,"Baja",1));
         try {
