@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class PrioridadJpaController implements Serializable {
 
-    public PrioridadJpaController(EntityManagerFactory emf) {
+    public PrioridadJpaController() {
         this.emf = JpaUtil.getEntityManagerFactory();
 
     }

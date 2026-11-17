@@ -14,5 +14,6 @@ import java.util.ArrayList;
 public interface SolicitudService {
     public ArrayList<Solicitud> listarSolicitud();
     public Solicitud obtenerSolicitud(long id);
+    public int crearSolicitud(Solicitud solicitud);
     public int eliminarSolicitud(long id);
 }

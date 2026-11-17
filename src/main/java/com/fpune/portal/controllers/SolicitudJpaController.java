@@ -255,4 +255,11 @@ public class SolicitudJpaController implements Serializable {
         }
     }
     
+    public boolean existeTicket(String codigo){
+        EntityManager em = getEntityManager();
+        return !em.createNamedQuery("Solicitud.findByCodigoTicket",Solicitud.class).setParameter("codigoTicket", codigo).setMaxResults(1).
+                getResultList().isEmpty();
+    
+    } 
+    
 }
