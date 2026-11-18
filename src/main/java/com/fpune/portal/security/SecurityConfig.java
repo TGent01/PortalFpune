@@ -52,10 +52,13 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/solicitudes").hasRole("Admin")
                .requestMatchers(HttpMethod.POST,"/solicitudes").permitAll()
                .requestMatchers(HttpMethod.GET,"/categorias").permitAll()
-
+                .requestMatchers(HttpMethod.GET, "/categorias/todas").hasRole("Admin")
+                .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/categorias").hasRole("Admin")
+                .requestMatchers(HttpMethod.PUT, "/categorias/**").hasRole("Admin")
                 
                 // BUENA PRÁCTICA: Rechazar cualquier otra ruta que no esté especificada arriba
-                .anyRequest().authenticated() 
+                .anyRequest().denyAll()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuth, UsernamePasswordAuthenticationFilter.class)
