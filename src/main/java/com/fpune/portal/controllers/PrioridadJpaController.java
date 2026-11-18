@@ -100,14 +100,8 @@ public class PrioridadJpaController implements Serializable {
     private List<Prioridad> findPrioridadEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Prioridad.class));
-            Query q = em.createQuery(cq);
-            if (!all) {
-                q.setMaxResults(maxResults);
-                q.setFirstResult(firstResult);
-            }
-            return q.getResultList();
+            return em.createQuery("SELECT p FROM Prioridad p ORDER BY p.nivel, p.id", Prioridad.class)
+                    .getResultList();
         } finally {
             em.close();
         }
@@ -117,6 +111,33 @@ public class PrioridadJpaController implements Serializable {
         EntityManager em = getEntityManager();
         try {
             return em.find(Prioridad.class, id);
+        } finally {
+            em.close();
+        }
+    }
+    public Prioridad findPrioridadByNombre(String nombre) {
+        EntityManager em = getEntityManager();
+        try {
+            return em.createNamedQuery("Prioridad.findByNombre", Prioridad.class)
+                    .setParameter("nombre", nombre)
+                    .setMaxResults(1)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Prioridad findPrioridadByNivel(int nivel) {
+        EntityManager em = getEntityManager();
+        try {
+            return em.createNamedQuery("Prioridad.findByNivel", Prioridad.class)
+                    .setParameter("nivel", nivel)
+                    .setMaxResults(1)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
         } finally {
             em.close();
         }

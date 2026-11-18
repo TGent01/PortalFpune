@@ -56,6 +56,14 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/categorias").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT, "/categorias/**").hasRole("Admin")
+                .requestMatchers(HttpMethod.GET, "/solicitudes/**").hasRole("Admin")   // reemplaza la de "/solicitudes"
+                .requestMatchers(HttpMethod.GET, "/estados/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/estados").hasRole("Admin")
+                .requestMatchers(HttpMethod.PUT, "/estados").hasRole("Admin")
+                .requestMatchers("/prioridades/**").hasRole("Admin")
+                .requestMatchers(HttpMethod.GET, "/tipos-solicitud/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/tipos-solicitud").hasRole("Admin")
+                .requestMatchers(HttpMethod.PUT, "/tipos-solicitud").hasRole("Admin")
                 
                 // BUENA PRÁCTICA: Rechazar cualquier otra ruta que no esté especificada arriba
                 .anyRequest().denyAll()

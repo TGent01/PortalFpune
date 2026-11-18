@@ -98,16 +98,10 @@ public class TipoSolicitudJpaController implements Serializable {
     }
 
     private List<TipoSolicitud> findTipoSolicitudEntities(boolean all, int maxResults, int firstResult) {
-        EntityManager em = getEntityManager();
+         EntityManager em = getEntityManager();
         try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(TipoSolicitud.class));
-            Query q = em.createQuery(cq);
-            if (!all) {
-                q.setMaxResults(maxResults);
-                q.setFirstResult(firstResult);
-            }
-            return q.getResultList();
+            return em.createQuery("SELECT t FROM TipoSolicitud t ORDER BY t.id", TipoSolicitud.class)
+                    .getResultList();
         } finally {
             em.close();
         }
@@ -117,6 +111,20 @@ public class TipoSolicitudJpaController implements Serializable {
         EntityManager em = getEntityManager();
         try {
             return em.find(TipoSolicitud.class, id);
+        } finally {
+            em.close();
+        }
+    }
+    
+    public TipoSolicitud findTipoSolicitudByNombre(String nombre) {
+        EntityManager em = getEntityManager();
+        try {
+            return em.createNamedQuery("TipoSolicitud.findByNombre", TipoSolicitud.class)
+                    .setParameter("nombre", nombre)
+                    .setMaxResults(1)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
         } finally {
             em.close();
         }
