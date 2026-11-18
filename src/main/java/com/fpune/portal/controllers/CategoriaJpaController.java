@@ -135,4 +135,29 @@ public class CategoriaJpaController implements Serializable {
         }
     }
     
+     public Categoria findCategoriaByNombre(String nombre) {
+        EntityManager em = getEntityManager();
+        try {
+            return em.createNamedQuery("Categoria.findByNombre", Categoria.class)
+                    .setParameter("nombre", nombre)
+                    .setMaxResults(1)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+        } finally {
+            em.close();
+        }
+    }
+    
+     public List<Categoria> findCategoriasActivas() {
+        EntityManager em = getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT c FROM Categoria c WHERE c.isActiva = true ORDER BY c.nombre", Categoria.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+      }
+    
 }

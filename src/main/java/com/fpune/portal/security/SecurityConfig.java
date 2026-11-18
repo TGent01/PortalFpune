@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE,"/usuarios/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET,"/solicitudes").hasRole("Admin")
                .requestMatchers(HttpMethod.POST,"/solicitudes").permitAll()
+               .requestMatchers(HttpMethod.GET,"/categorias").permitAll()
 
                 
                 // BUENA PRÁCTICA: Rechazar cualquier otra ruta que no esté especificada arriba

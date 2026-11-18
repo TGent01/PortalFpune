@@ -3,6 +3,7 @@ package com.fpune.portal.services;
 
 import com.fpune.portal.controllers.UsuarioJpaController;
 import com.fpune.portal.controllers.UsuarioJpaController;
+import com.fpune.portal.controllers.exceptions.NonexistentEntityException;
 import com.fpune.portal.entity.Rol;
 import com.fpune.portal.entity.Usuario;
 import com.fpune.portal.status.UsuarioStatusEnum;
@@ -85,15 +86,15 @@ public class UsuarioServiceMysqlImpl implements UsuarioService{
     @Override
     public int eliminarUsuario(Long id) {
         if(usuarioJpaController.findUsuario(id)==null){
-            return status.USUARIO_NO_EXISTE.getCodigo();
+            return UsuarioStatusEnum.USUARIO_NO_EXISTE.getCodigo();
         }
         try {
             usuarioJpaController.destroy(id);
-        } catch (Exception e) {
-            return status.USUARIO_NO_PROCESABLE.getCodigo();
+        } catch (NonexistentEntityException e) {
+            return UsuarioStatusEnum.USUARIO_NO_PROCESABLE.getCodigo();
         }
         
-        return status.USUARIO_ELIMINADO.getCodigo();
+        return UsuarioStatusEnum.USUARIO_ELIMINADO.getCodigo();
     }
 
     @Override

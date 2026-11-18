@@ -3,6 +3,8 @@ package com.fpune.portal.services;
 
 import com.fpune.portal.util.TicketGenerator;
 import com.fpune.portal.controllers.SolicitudJpaController;
+import com.fpune.portal.controllers.exceptions.IllegalOrphanException;
+import com.fpune.portal.controllers.exceptions.NonexistentEntityException;
 import com.fpune.portal.entity.Estado;
 import com.fpune.portal.entity.Prioridad;
 import com.fpune.portal.entity.Solicitud;
@@ -35,10 +37,10 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
 
     @Override
     public int crearSolicitud(Solicitud solicitud) {
-        if(solicitud.getAsunto()==null || solicitud.getCategoria()==null || solicitud.getDescripcion()==null || solicitud.getTipoSolicitud()==null){
-            return status.SOLICITUD_NO_PROCESABLE.getCodigo();
+        if(solicitud==null || estaVacio(solicitud.getAsunto()) || solicitud.getCategoria()==null || estaVacio(solicitud.getDescripcion()) || solicitud.getTipoSolicitud()==null){
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
         }
-        
+        solicitud.setId(null);
         LocalDate localDate=LocalDate.now();
         //Esto hai que cambiar luego cuando este el servicio Estado
         solicitud.setEstado(new Estado(1,"Recibido",false,1));
@@ -50,16 +52,29 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
         solicitud.setPrioridad(new Prioridad(1,"Baja",1));
         try {
             new SolicitudJpaController().create(solicitud);
-            return status.SOLICITUD_CREADO.getCodigo();
+            return SolicitudStatusEnum.SOLICITUD_CREADO.getCodigo();
         } catch (Exception e) {
             
             System.out.println("error "+e.getMessage());
-            return status.SOLICITUD_NO_PROCESABLE.getCodigo();
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
         }
     }
     @Override
     public int eliminarSolicitud(long id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if(solicitudJpaController.findSolicitud(id)!=null){
+            try {
+                solicitudJpaController.destroy(id);
+                return SolicitudStatusEnum.SOLICITUD_ELIMINADO.getCodigo();
+            } catch (IllegalOrphanException ex) {
+                System.getLogger(SolicitudServiceMysqlImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                return SolicitudStatusEnum.SOLICITUD_NO_EXISTE.getCodigo();
+            } catch (NonexistentEntityException ex) {
+                return SolicitudStatusEnum.SOLICITUD_NO_EXISTE.getCodigo();            }
+        }else{
+            return SolicitudStatusEnum.SOLICITUD_NO_EXISTE.getCodigo();
+        }
     }
-    
+    private static boolean estaVacio(String s) {
+        return s == null || s.isBlank();
+    }
 }
