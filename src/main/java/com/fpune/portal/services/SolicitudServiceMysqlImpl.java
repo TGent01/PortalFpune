@@ -6,6 +6,7 @@ import com.fpune.portal.util.TicketGenerator;
 import com.fpune.portal.controllers.SolicitudJpaController;
 import com.fpune.portal.controllers.exceptions.IllegalOrphanException;
 import com.fpune.portal.controllers.exceptions.NonexistentEntityException;
+import com.fpune.portal.dtos.SeguimientoSolicitudDTO;
 import com.fpune.portal.entity.Estado;
 import com.fpune.portal.entity.Evidencia;
 import com.fpune.portal.entity.Prioridad;
@@ -97,5 +98,13 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
     }
     private static boolean estaVacio(String s) {
         return s == null || s.isBlank();
+    }
+
+    @Override
+    public SeguimientoSolicitudDTO consultarPorTicket(String codigoTicket) {
+            // findSolicitudByCodigoTicket ya normaliza (espacios y mayúsculas)
+        Solicitud s = solicitudJpaController.findSolicitudByCodigoTicket(codigoTicket);
+        return SeguimientoSolicitudDTO.desde(s);
+
     }
 }

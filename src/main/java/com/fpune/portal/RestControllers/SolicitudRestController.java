@@ -1,6 +1,7 @@
 
 package com.fpune.portal.RestControllers;
 
+import com.fpune.portal.dtos.SeguimientoSolicitudDTO;
 import com.fpune.portal.entity.Evidencia;
 import com.fpune.portal.entity.Solicitud;
 import com.fpune.portal.services.EvidenciaService;
@@ -83,4 +84,13 @@ public class SolicitudRestController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     
+    
+    @GetMapping("/ticket/{codigo}")
+    public ResponseEntity<SeguimientoSolicitudDTO> getSeguimiento(@PathVariable String codigo) {
+        SeguimientoSolicitudDTO seguimiento = solicitudService.consultarPorTicket(codigo);
+        if (seguimiento == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(seguimiento);
+}
 }

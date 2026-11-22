@@ -50,6 +50,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,"/usuarios").hasRole("Admin")
                 .requestMatchers(HttpMethod.DELETE,"/usuarios/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET,"/solicitudes").hasRole("Admin")
+                .requestMatchers(HttpMethod.GET,"/solicitudes/**").hasRole("Admin")
+                .requestMatchers(HttpMethod.GET, "/solicitudes/ticket/**").authenticated()
+
                 .requestMatchers(HttpMethod.DELETE,"/solicitudes/**").hasRole("Admin")
                .requestMatchers(HttpMethod.POST,"/solicitudes").authenticated()
                .requestMatchers(HttpMethod.GET,"/categorias").permitAll()
