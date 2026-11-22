@@ -1,6 +1,7 @@
 package com.fpune.portal.dtos;
 
 import com.fpune.portal.entity.Solicitud;
+import com.fpune.portal.entity.Solicitud;
 import java.time.LocalDate;
 import java.util.Date;
 

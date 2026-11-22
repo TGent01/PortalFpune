@@ -1,6 +1,7 @@
 
 package com.fpune.portal.services;
 
+import com.fpune.portal.controllers.EstadoJpaController;
 import com.fpune.portal.controllers.EvidenciaJpaController;
 import com.fpune.portal.util.TicketGenerator;
 import com.fpune.portal.controllers.SolicitudJpaController;
@@ -30,6 +31,7 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
     SolicitudJpaController solicitudJpaController=new SolicitudJpaController();
     
     private final EvidenciaJpaController evidenciaJpaController = new EvidenciaJpaController();
+    private final EstadoJpaController estadoJpaC=new EstadoJpaController();
 
     @Autowired
     private FileStorageService fileStorageService;
@@ -54,7 +56,7 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
         solicitud.setId(null);
         LocalDate localDate=LocalDate.now();
         //Esto hai que cambiar luego cuando este el servicio Estado
-        solicitud.setEstado(new Estado(1,"Recibido",false,1));
+        solicitud.setEstado(estadoJpaC.findEstadoInicial());
         Date fecha_de_hoy = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         //Date fecha_de_cierre= Date.from(localDate.plusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant());
         solicitud.setFechaCreacion(fecha_de_hoy);

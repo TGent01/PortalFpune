@@ -43,34 +43,43 @@ public class SecurityConfig {
                 // AGREGAR ESTA LÍNEA: Permite que el navegador haga la validación previa de CORS
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
                 
-                // Tus reglas actuales
+        
                 .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/usuarios/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST,"/usuarios").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT,"/usuarios").hasRole("Admin")
                 .requestMatchers(HttpMethod.DELETE,"/usuarios/**").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET,"/solicitudes").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET,"/solicitudes/**").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET, "/solicitudes/ticket/**").authenticated()
 
-                .requestMatchers(HttpMethod.DELETE,"/solicitudes/**").hasRole("Admin")
-               .requestMatchers(HttpMethod.POST,"/solicitudes").authenticated()
                .requestMatchers(HttpMethod.GET,"/categorias").permitAll()
                 .requestMatchers(HttpMethod.GET, "/categorias/todas").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/categorias").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT, "/categorias/**").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET, "/solicitudes/**").hasRole("Admin")   // reemplaza la de "/solicitudes"
+
+                // Página de error de Spring: si no se permite, cualquier excepción (500)
+                // o error llega al cliente como 403 por el denyAll() del final.
+                .requestMatchers("/error").permitAll()
+
                 .requestMatchers(HttpMethod.GET, "/estados/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/estados").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT, "/estados").hasRole("Admin")
-                .requestMatchers("/prioridades/**").hasRole("Admin")
+                .requestMatchers(HttpMethod.GET,"/prioridades/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET, "/tipos-solicitud/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/tipos-solicitud").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT, "/tipos-solicitud").hasRole("Admin")
-                .requestMatchers(HttpMethod.POST,"/evidencias/**").authenticated()
-                
+
+                // Solicitudes:
+                .requestMatchers(HttpMethod.GET, "/solicitudes/ticket/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/solicitudes/**").hasRole("Admin")
+                .requestMatchers(HttpMethod.POST, "/solicitudes").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/solicitudes/**").hasRole("Admin")
                 // BUENA PRÁCTICA: Rechazar cualquier otra ruta que no esté especificada arriba
+                    
+                    // Evidencias: 
+                .requestMatchers(HttpMethod.POST, "/evidencias/ticket/*").authenticated()
+                .requestMatchers(HttpMethod.GET, "/evidencias/ticket/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/evidencias/**").hasRole("Admin")
+                .requestMatchers(HttpMethod.DELETE, "/evidencias/**").hasRole("Admin")
                 .anyRequest().denyAll()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
