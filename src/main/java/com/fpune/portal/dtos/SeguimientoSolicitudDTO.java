@@ -1,9 +1,11 @@
 package com.fpune.portal.dtos;
 
-import com.fpune.portal.entity.Solicitud;
+import com.fpune.portal.entity.HistorialEstados;
 import com.fpune.portal.entity.Solicitud;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Lo que ve el solicitante al consultar su solicitud por ticket.
@@ -21,8 +23,9 @@ public class SeguimientoSolicitudDTO {
     private final boolean finalizada;   // true si el estado es final (Resuelto / Rechazado)
     private final LocalDate fechaCreacion;
     private final LocalDate fechaCierre; // null mientras siga abierta
+    private final List<HistorialEstadoDTO> historial; // cambios de estado, del más viejo al más nuevo
 
-    private SeguimientoSolicitudDTO(Solicitud s) {
+    private SeguimientoSolicitudDTO(Solicitud s, List<HistorialEstados> historial) {
         this.codigoTicket = s.getCodigoTicket();
         this.asunto = s.getAsunto();
         this.tipo = s.getTipoSolicitud() != null ? s.getTipoSolicitud().getNombre() : null;
@@ -31,11 +34,17 @@ public class SeguimientoSolicitudDTO {
         this.finalizada = s.getEstado() != null && s.getEstado().getEsFinal();
         this.fechaCreacion = aLocalDate(s.getFechaCreacion());
         this.fechaCierre = aLocalDate(s.getFechaCierre());
+        this.historial = new ArrayList<>();
+        if (historial != null) {
+            for (HistorialEstados h : historial) {
+                this.historial.add(HistorialEstadoDTO.paraSolicitante(h)); // sin datos del admin
+            }
+        }
     }
 
-    /** Convierte la entidad en el DTO de seguimiento. */
-    public static SeguimientoSolicitudDTO desde(Solicitud s) {
-        return s == null ? null : new SeguimientoSolicitudDTO(s);
+    /** Convierte la entidad (y su historial) en el DTO de seguimiento. */
+    public static SeguimientoSolicitudDTO desde(Solicitud s, List<HistorialEstados> historial) {
+        return s == null ? null : new SeguimientoSolicitudDTO(s, historial);
     }
 
     /**
@@ -77,5 +86,9 @@ public class SeguimientoSolicitudDTO {
 
     public LocalDate getFechaCierre() {
         return fechaCierre;
+    }
+
+    public List<HistorialEstadoDTO> getHistorial() {
+        return historial;
     }
 }

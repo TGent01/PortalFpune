@@ -21,6 +21,7 @@ import com.fpune.portal.entity.Solicitud;
 import com.fpune.portal.entity.Usuario;
 import com.fpune.portal.exceptions.StorageException;
 import com.fpune.portal.status.SolicitudStatusEnum;
+import static jakarta.persistence.Timeout.s;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -60,6 +61,13 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
     @Override
     public Solicitud obtenerSolicitud(long id) {
         return solicitudJpaController.findSolicitud(id);
+    }
+    
+        @Override
+    public ArrayList<Solicitud> listarSolicitudes(Integer idEstado, Integer idCategoria,
+            Integer idTipo, Integer idPrioridad) {
+        return new ArrayList<>(solicitudJpaController.findSolicitudesFiltradas(
+                idEstado, idCategoria, idTipo, idPrioridad));
     }
 
     @Override
@@ -118,9 +126,11 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
 
     @Override
     public SeguimientoSolicitudDTO consultarPorTicket(String codigoTicket) {
-            // findSolicitudByCodigoTicket ya normaliza (espacios y mayúsculas)
-        Solicitud s = solicitudJpaController.findSolicitudByCodigoTicket(codigoTicket);
-        return SeguimientoSolicitudDTO.desde(s);
+         Solicitud s = solicitudJpaController.findSolicitudByCodigoTicket(codigoTicket);
+        if (s == null) {
+            return null;
+        }
+        return SeguimientoSolicitudDTO.desde(s, historialJpaController.findBySolicitud(s.getId()));
 
     }
     

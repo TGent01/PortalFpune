@@ -21,6 +21,8 @@ public interface SolicitudService {
     public int eliminarSolicitud(long id);
     public SeguimientoSolicitudDTO consultarPorTicket(String codigoTicket);
     public int cambiarEstado(long idSolicitud, CambioEstadoRequestDTO cambio, String correoAdmin);
+    public ArrayList<Solicitud> listarSolicitudes(Integer idEstado, Integer idCategoria,
+        Integer idTipo, Integer idPrioridad);
 
     public ArrayList<HistorialEstadoDTO> listarHistorial(long idSolicitud);
 }

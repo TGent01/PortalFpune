@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -41,10 +42,17 @@ public class SolicitudRestController {
     
     SolicitudStatusEnum status;
     
+    /**
+ * Panel admin. Filtros opcionales, ej:
+ * GET /solicitudes?estado=2&categoria=3&tipo=1&prioridad=3
+ */
     @GetMapping
-    public ResponseEntity<ArrayList<Solicitud>> getSolicitudes(){
-        return ResponseEntity.ok(solicitudService.listarSolicitud());
-    
+    public ResponseEntity<ArrayList<Solicitud>> getSolicitudes(
+            @RequestParam(name = "estado", required = false) Integer idEstado,
+            @RequestParam(name = "categoria", required = false) Integer idCategoria,
+            @RequestParam(name = "tipo", required = false) Integer idTipo,
+            @RequestParam(name = "prioridad", required = false) Integer idPrioridad) {
+        return ResponseEntity.ok(solicitudService.listarSolicitudes(idEstado, idCategoria, idTipo, idPrioridad));
     }
     
     @GetMapping("/{id}")
