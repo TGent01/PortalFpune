@@ -1,6 +1,7 @@
 
 package com.fpune.portal.RestControllers;
 
+import com.fpune.portal.dtos.CambioEstadoRequestDTO;
 import com.fpune.portal.dtos.HistorialEstadoDTO;
 import com.fpune.portal.dtos.SeguimientoSolicitudDTO;
 import com.fpune.portal.entity.Evidencia;
@@ -15,10 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -91,6 +94,24 @@ public class SolicitudRestController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Solicitud eliminada con exito");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+    
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<?> putEstado(@PathVariable long id, @RequestBody CambioEstadoRequestDTO cambio,
+            Authentication authentication) {
+        int r = solicitudService.cambiarEstado(id, cambio, authentication.getName());
+        if (r == SolicitudStatusEnum.SOLICITUD_EDITADO.getCodigo()) {
+            return ResponseEntity.ok(solicitudService.obtenerSolicitud(id));
+        } else if (r == SolicitudStatusEnum.SOLICITUD_NO_EXISTE.getCodigo()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La solicitud no existe");
+        } else if (r == SolicitudStatusEnum.SOLICITUD_CERRADA.getCodigo()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("La solicitud ya está cerrada y no admite cambios");
+        } else if (r == SolicitudStatusEnum.SOLICITUD_SIN_CAMBIOS.getCodigo()) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body("No hay cambios: elegí otro estado, otra prioridad o agregá un comentario");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(
+                    "Datos no válidos. Verificá el estado y la prioridad; para Resuelto o Rechazado el comentario es obligatorio");
+        }
     }
     
     
