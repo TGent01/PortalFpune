@@ -6,6 +6,7 @@ package com.fpune.portal.controllers;
 
 import com.fpune.portal.controllers.exceptions.IllegalOrphanException;
 import com.fpune.portal.controllers.exceptions.NonexistentEntityException;
+import com.fpune.portal.entity.Estado;
 import java.io.Serializable;
 import jakarta.persistence.Query;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,10 +16,14 @@ import com.fpune.portal.entity.Evidencia;
 import java.util.ArrayList;
 import java.util.List;
 import com.fpune.portal.entity.HistorialEstados;
+import com.fpune.portal.entity.Prioridad;
 import com.fpune.portal.entity.Solicitud;
+import com.fpune.portal.entity.Usuario;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
+import java.util.Date;
 
 /**
  *
@@ -214,6 +219,101 @@ public class SolicitudJpaController implements Serializable {
             return q.getResultList();
         } finally {
             em.close();
+        }
+    }
+    
+    public List<Solicitud> findSolicitudesFiltradas(Integer idEstado, Integer idCategoria,
+            Integer idTipo, Integer idPrioridad) {
+        EntityManager em = getEntityManager();
+        try {
+            StringBuilder jpql = new StringBuilder("SELECT s FROM Solicitud s WHERE 1 = 1");
+            if (idEstado != null) {
+                jpql.append(" AND s.estado.id = :idEstado");
+            }
+            if (idCategoria != null) {
+                jpql.append(" AND s.categoria.id = :idCategoria");
+            }
+            if (idTipo != null) {
+                jpql.append(" AND s.tipoSolicitud.id = :idTipo");
+            }
+            if (idPrioridad != null) {
+                jpql.append(" AND s.prioridad.id = :idPrioridad");
+            }
+            jpql.append(" ORDER BY s.fechaCreacion DESC, s.id DESC");
+
+            TypedQuery<Solicitud> q = em.createQuery(jpql.toString(), Solicitud.class);
+            if (idEstado != null) {
+                q.setParameter("idEstado", idEstado);
+            }
+            if (idCategoria != null) {
+                q.setParameter("idCategoria", idCategoria);
+            }
+            if (idTipo != null) {
+                q.setParameter("idTipo", idTipo);
+            }
+            if (idPrioridad != null) {
+                q.setParameter("idPrioridad", idPrioridad);
+            }
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Cambia estado y/o prioridad de una solicitud y registra el cambio en el
+     * historial, TODO en una sola transacción (o se guarda todo o nada).
+     *
+     * Las validaciones (estado final, existencia, comentario obligatorio...) se
+     * hacen antes en SolicitudServiceMysqlImpl.cambiarEstado().
+     *
+     * @param idPrioridad null = mantener la prioridad actual
+     * @param idAdmin     usuario administrador que hace el cambio
+     */
+    public void cambiarEstado(Long idSolicitud, Integer idEstadoNuevo, Integer idPrioridad,
+            String comentario, Long idAdmin) throws NonexistentEntityException {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+
+            Solicitud solicitud = em.find(Solicitud.class, idSolicitud);
+            if (solicitud == null) {
+                throw new NonexistentEntityException("The solicitud with id " + idSolicitud + " no longer exists.");
+            }
+            Estado estadoAnterior = solicitud.getEstado();
+            Estado estadoNuevo = em.find(Estado.class, idEstadoNuevo);
+
+            // La prioridad solo se guarda en el historial si en este cambio se asignó una distinta
+            Prioridad prioridadAsignada = null;
+            if (idPrioridad != null) {
+                Prioridad nueva = em.find(Prioridad.class, idPrioridad);
+                Prioridad actual = solicitud.getPrioridad();
+                if (actual == null || !actual.getId().equals(nueva.getId())) {
+                    prioridadAsignada = nueva;
+                }
+                solicitud.setPrioridad(nueva);
+            }
+
+            solicitud.setEstado(estadoNuevo);
+            // Fecha de cierre: se completa al llegar a un estado final
+            solicitud.setFechaCierre(estadoNuevo.getEsFinal() ? new Date() : null);
+            // "solicitud" está administrada por el EntityManager: el UPDATE se hace solo en el commit
+
+            HistorialEstados historial = new HistorialEstados(solicitud, estadoAnterior, estadoNuevo,
+                    prioridadAsignada, comentario, em.getReference(Usuario.class, idAdmin));
+            em.persist(historial); // fechaCambio la pone el @PrePersist
+
+            em.getTransaction().commit();
+        } catch (RuntimeException ex) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
         }
     }
 

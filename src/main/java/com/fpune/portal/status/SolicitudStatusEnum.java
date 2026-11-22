@@ -14,7 +14,9 @@ public enum SolicitudStatusEnum {
     SOLICITUD_CREADO(1),
     SOLICITUD_EDITADO(2),
     SOLICITUD_ELIMINADO(3),
-    SOLICITUD_NO_PROCESABLE(-2);
+    SOLICITUD_NO_PROCESABLE(-2),
+    SOLICITUD_CERRADA(-3),     // está en un estado final: ya no admite cambios
+    SOLICITUD_SIN_CAMBIOS(-4); // mismo estado, sin prioridad nueva ni comentario
     private final int codigo;
     
     SolicitudStatusEnum(int codigo){

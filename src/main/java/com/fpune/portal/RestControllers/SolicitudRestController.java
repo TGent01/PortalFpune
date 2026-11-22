@@ -1,6 +1,7 @@
 
 package com.fpune.portal.RestControllers;
 
+import com.fpune.portal.dtos.HistorialEstadoDTO;
 import com.fpune.portal.dtos.SeguimientoSolicitudDTO;
 import com.fpune.portal.entity.Evidencia;
 import com.fpune.portal.entity.Solicitud;
@@ -52,6 +53,14 @@ public class SolicitudRestController {
         }else{
         return ResponseEntity.ok(solicitudService.obtenerSolicitud(id));
         }
+    }
+    
+     @GetMapping("/{id}/historial")
+    public ResponseEntity<ArrayList<HistorialEstadoDTO>> getHistorial(@PathVariable long id) {
+        if (solicitudService.obtenerSolicitud(id) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(solicitudService.listarHistorial(id));
     }
     
     @PostMapping

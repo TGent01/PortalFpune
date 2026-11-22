@@ -71,6 +71,7 @@ public class SecurityConfig {
                 // Solicitudes:
                 .requestMatchers(HttpMethod.GET, "/solicitudes/ticket/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/solicitudes/**").hasRole("Admin")
+                 .requestMatchers(HttpMethod.PUT, "/solicitudes/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST, "/solicitudes").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/solicitudes/**").hasRole("Admin")
                 // BUENA PRÁCTICA: Rechazar cualquier otra ruta que no esté especificada arriba

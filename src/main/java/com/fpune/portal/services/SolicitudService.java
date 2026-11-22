@@ -4,6 +4,8 @@
  */
 package com.fpune.portal.services;
 
+import com.fpune.portal.dtos.CambioEstadoRequestDTO;
+import com.fpune.portal.dtos.HistorialEstadoDTO;
 import com.fpune.portal.dtos.SeguimientoSolicitudDTO;
 import com.fpune.portal.entity.Solicitud;
 import java.util.ArrayList;
@@ -18,4 +20,7 @@ public interface SolicitudService {
     public int crearSolicitud(Solicitud solicitud);
     public int eliminarSolicitud(long id);
     public SeguimientoSolicitudDTO consultarPorTicket(String codigoTicket);
+    public int cambiarEstado(long idSolicitud, CambioEstadoRequestDTO cambio, String correoAdmin);
+
+    public ArrayList<HistorialEstadoDTO> listarHistorial(long idSolicitud);
 }

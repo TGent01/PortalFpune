@@ -3,15 +3,22 @@ package com.fpune.portal.services;
 
 import com.fpune.portal.controllers.EstadoJpaController;
 import com.fpune.portal.controllers.EvidenciaJpaController;
+import com.fpune.portal.controllers.HistorialEstadosJpaController;
+import com.fpune.portal.controllers.PrioridadJpaController;
 import com.fpune.portal.util.TicketGenerator;
 import com.fpune.portal.controllers.SolicitudJpaController;
+import com.fpune.portal.controllers.UsuarioJpaController;
 import com.fpune.portal.controllers.exceptions.IllegalOrphanException;
 import com.fpune.portal.controllers.exceptions.NonexistentEntityException;
+import com.fpune.portal.dtos.CambioEstadoRequestDTO;
+import com.fpune.portal.dtos.HistorialEstadoDTO;
 import com.fpune.portal.dtos.SeguimientoSolicitudDTO;
 import com.fpune.portal.entity.Estado;
 import com.fpune.portal.entity.Evidencia;
+import com.fpune.portal.entity.HistorialEstados;
 import com.fpune.portal.entity.Prioridad;
 import com.fpune.portal.entity.Solicitud;
+import com.fpune.portal.entity.Usuario;
 import com.fpune.portal.exceptions.StorageException;
 import com.fpune.portal.status.SolicitudStatusEnum;
 import java.time.LocalDate;
@@ -29,9 +36,16 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
     
     SolicitudStatusEnum status;
     SolicitudJpaController solicitudJpaController=new SolicitudJpaController();
+    private final HistorialEstadosJpaController historialJpaController = new HistorialEstadosJpaController();
     
     private final EvidenciaJpaController evidenciaJpaController = new EvidenciaJpaController();
     private final EstadoJpaController estadoJpaC=new EstadoJpaController();
+    
+
+    private final PrioridadJpaController prioridadJpaController = new PrioridadJpaController();
+    private final UsuarioJpaController usuarioJpaController = new UsuarioJpaController();
+    
+    private static final int max_comentario=1000;
 
     @Autowired
     private FileStorageService fileStorageService;
@@ -108,5 +122,78 @@ public class SolicitudServiceMysqlImpl implements SolicitudService{
         Solicitud s = solicitudJpaController.findSolicitudByCodigoTicket(codigoTicket);
         return SeguimientoSolicitudDTO.desde(s);
 
+    }
+    
+    @Override
+    public int cambiarEstado(long idSolicitud, CambioEstadoRequestDTO cambio, String correoAdmin) {
+        // 1. Datos mínimos
+        if (cambio == null || cambio.getIdEstado() == null) {
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
+        }
+        String comentario = estaVacio(cambio.getComentario()) ? null : cambio.getComentario().trim();
+        if (comentario != null && comentario.length() > max_comentario) {
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
+        }
+
+        // 2. La solicitud existe y sigue abierta
+        Solicitud solicitud = solicitudJpaController.findSolicitud(idSolicitud);
+        if (solicitud == null) {
+            return SolicitudStatusEnum.SOLICITUD_NO_EXISTE.getCodigo();
+        }
+        if (solicitud.getEstado() != null && solicitud.getEstado().getEsFinal()) {
+            return SolicitudStatusEnum.SOLICITUD_CERRADA.getCodigo();
+        }
+
+        // 3. El estado y la prioridad pedidos existen
+        Estado estadoNuevo = estadoJpaC.findEstado(cambio.getIdEstado());
+        if (estadoNuevo == null) {
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
+        }
+        if (cambio.getIdPrioridad() != null && prioridadJpaController.findPrioridad(cambio.getIdPrioridad()) == null) {
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
+        }
+
+        // 4. Para cerrar (Resuelto / Rechazado) hay que explicar el motivo al solicitante
+        if (estadoNuevo.getEsFinal() && comentario == null) {
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
+        }
+
+        // 5. Tiene que cambiar algo: el estado, la prioridad o al menos agregar un comentario
+        boolean mismoEstado = solicitud.getEstado() != null
+                && solicitud.getEstado().getId().equals(estadoNuevo.getId());
+        boolean mismaPrioridad = cambio.getIdPrioridad() == null
+                || (solicitud.getPrioridad() != null
+                && solicitud.getPrioridad().getId().equals(cambio.getIdPrioridad()));
+        if (mismoEstado && mismaPrioridad && comentario == null) {
+            return SolicitudStatusEnum.SOLICITUD_SIN_CAMBIOS.getCodigo();
+        }
+
+        // 6. El admin que hace el cambio (sale del token)
+        Usuario admin = usuarioJpaController.findUsuarioByCorreo(correoAdmin);
+        if (admin == null) {
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
+        }
+
+        // 7. Guardar todo en una transacción
+        try {
+            solicitudJpaController.cambiarEstado(idSolicitud, estadoNuevo.getId(),
+                    cambio.getIdPrioridad(), comentario, admin.getId());
+            return SolicitudStatusEnum.SOLICITUD_EDITADO.getCodigo();
+        } catch (RuntimeException ex) {
+            System.out.println("error " + ex.getMessage());
+            return SolicitudStatusEnum.SOLICITUD_NO_PROCESABLE.getCodigo();
+        } catch (NonexistentEntityException ex) {
+        return SolicitudStatusEnum.SOLICITUD_NO_EXISTE.getCodigo();
+
+        }
+    }
+
+    @Override
+    public ArrayList<HistorialEstadoDTO> listarHistorial(long idSolicitud) {
+        ArrayList<HistorialEstadoDTO> lista = new ArrayList<>();
+        for (HistorialEstados h : historialJpaController.findBySolicitud(idSolicitud)) {
+            lista.add(HistorialEstadoDTO.paraAdmin(h));
+        }
+        return lista;
     }
 }
