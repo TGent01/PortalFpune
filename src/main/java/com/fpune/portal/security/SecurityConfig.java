@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/tipos-solicitud").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT, "/tipos-solicitud").hasRole("Admin")
 
-                // Solicitudes:
+                 // Solicitudes:
                 .requestMatchers(HttpMethod.GET, "/solicitudes/ticket/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/solicitudes/**").hasRole("Admin")
                  .requestMatchers(HttpMethod.PUT, "/solicitudes/**").hasRole("Admin")
@@ -81,7 +81,14 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/evidencias/ticket/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET, "/evidencias/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.DELETE, "/evidencias/**").hasRole("Admin")
+                // Estadísticas (dashboard del administrador)
+                .requestMatchers(HttpMethod.GET, "/estadisticas/**").hasRole("Admin")
+                    
+                    
+                 .requestMatchers(HttpMethod.GET, "/datos-abiertos/**").permitAll()
                 .anyRequest().denyAll()
+            
+
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuth, UsernamePasswordAuthenticationFilter.class)
