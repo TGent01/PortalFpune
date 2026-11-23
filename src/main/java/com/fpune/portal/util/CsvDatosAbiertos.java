@@ -1,6 +1,7 @@
 package com.fpune.portal.util;
 
 import com.fpune.portal.dtos.DatosAbiertosDTO;
+import com.fpune.portal.dtos.DatosAbiertosDTO;
 import java.util.List;
 
 /**
