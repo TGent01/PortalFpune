@@ -21,7 +21,6 @@ import com.fpune.portal.entity.Solicitud;
 import com.fpune.portal.entity.Usuario;
 import com.fpune.portal.exceptions.StorageException;
 import com.fpune.portal.status.SolicitudStatusEnum;
-import static jakarta.persistence.Timeout.s;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;

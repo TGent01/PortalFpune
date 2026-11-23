@@ -78,7 +78,7 @@ public class SecurityConfig {
                     
                     // Evidencias: 
                 .requestMatchers(HttpMethod.POST, "/evidencias/ticket/*").authenticated()
-                .requestMatchers(HttpMethod.GET, "/evidencias/ticket/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/evidencias/ticket/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET, "/evidencias/**").hasRole("Admin")
                 .requestMatchers(HttpMethod.DELETE, "/evidencias/**").hasRole("Admin")
                 .anyRequest().denyAll()
@@ -110,6 +110,8 @@ public class SecurityConfig {
         
         // 3. ¿Qué cabeceras (Headers) permitimos que nos envíen?
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        
+        configuration.setExposedHeaders(Arrays.asList("Content-Disposition"));
         
         // 4. Permitir que el frontend lea la respuesta
         configuration.setAllowCredentials(true);
