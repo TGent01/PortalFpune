@@ -50,9 +50,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,"/usuarios").hasRole("Admin")
                 .requestMatchers(HttpMethod.DELETE,"/usuarios/**").hasRole("Admin")
 
-               .requestMatchers(HttpMethod.GET,"/categorias").permitAll()
+               .requestMatchers(HttpMethod.GET,"/categorias").authenticated()
                 .requestMatchers(HttpMethod.GET, "/categorias/todas").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/categorias/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/categorias").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT, "/categorias/**").hasRole("Admin")
 
@@ -60,11 +60,11 @@ public class SecurityConfig {
                 // o error llega al cliente como 403 por el denyAll() del final.
                 .requestMatchers("/error").permitAll()
 
-                .requestMatchers(HttpMethod.GET, "/estados/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/estados/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/estados").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT, "/estados").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET,"/prioridades/**").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET, "/tipos-solicitud/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/tipos-solicitud/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/tipos-solicitud").hasRole("Admin")
                 .requestMatchers(HttpMethod.PUT, "/tipos-solicitud").hasRole("Admin")
 
